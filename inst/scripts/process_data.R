@@ -1,5 +1,6 @@
-library(rhomis)
-
+#library(rhomis)
+path_to_package = "/Users/sp20532/Documents/rhomis/rhomis-R-package/"
+devtools::load_all(path=path_to_package)
 
 
 processData(dataSource="csv",
@@ -9,7 +10,7 @@ surveyFile=NULL,
 moduleSaving=F,
 extractUnits=F,
 processDataSet=T,
-dataFilePath="inst/extdata/projects/UG_GEN_2021/raw_data.csv",
+dataFilePath="extdata/rhomis_dataset.csv",
 central_url=NULL,
 central_email=NULL,
 central_password=NULL,
@@ -18,7 +19,7 @@ form_name=NULL,
 form_version=NULL,
 database=NULL)
 
-setwd("../../../../")
+# setwd("../../../../")
 
 
 # dataSource="csv"
