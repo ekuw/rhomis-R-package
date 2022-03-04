@@ -127,7 +127,6 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "19e84500b64bc7e589cb1e2550e25832"
->>>>>>> de1e071741e45b86b063492f20bde857606ca052
     },
     "ellipsis": {
       "Package": "ellipsis",
