@@ -46,7 +46,7 @@ library(jsonlite)
 #' @examples
 processData <- function(
     dataSource="csv",
-    outputType="csv",
+    outputType=c("csv", "mongodb"), # list of allowed values for outputType arguments, default is first element in vector (csv)
     coreOnly=T,
     surveyFile=NULL,
     moduleSaving=F,
@@ -62,6 +62,8 @@ processData <- function(
     database=NULL,
     draft=NULL){
 
+    # Check validity of OutputTypes and print error if unknown OutputType is supplied
+    outputType<- match.arg(outputType)
 
     # Print warnings as they occur.
     options(warn = 1)
@@ -131,9 +133,6 @@ processData <- function(
                 }
 
 
-                if(outputType!="csv"&outputType!="mongodb"){
-                    stop("Must specify whether to save the output locally or in a mongodb")
-                }
 
                 #---------------------------------------------------------------
                 # Loading Submission Data
@@ -142,6 +141,7 @@ processData <- function(
                 if(dataSource=="csv")
                 {
                     rhomis_data <- readr::read_csv(dataFilePath, col_types = readr::cols(), na = c("n/a","-999","NA"))
+
                     colnames(rhomis_data) <- clean_column_names(colnames(rhomis_data),
                                                                 repeat_columns = c("crop_repeat",
                                                                                    "livestock_repeat",
@@ -284,9 +284,7 @@ processData <- function(
                     if (outputType=="csv"){
                         dir.create("modules", showWarnings = F)
                         readr::write_csv(modules_used,"modules/modules.csv")
-                    }
-
-                    if (outputType=="mongodb"){
+                    } else {
                         save_data_set_to_db(
                             data = modules_used,
                             data_type = "moduleData",
@@ -344,11 +342,8 @@ processData <- function(
                         # Loading all of the unit conversions locally
                         #---------------------------------------------
                         load_local_units(file_names)
-                    }
+                    } else {
 
-
-                    if (outputType=="mongodb")
-                    {
                         unit_list <- find_db_units(projectID=project_name,
                                                    formID=form_name,
                                                    url = "mongodb://localhost",
@@ -477,8 +472,7 @@ processData <- function(
                             crop_price <- crop_price %>% dplyr::mutate_all(replace_infinite) %>%  dplyr::summarise_all(mean, na.rm = TRUE)
                             readr::write_csv(crop_price,"./mean_prices/crop_prices.csv")
                         }
-                    }
-                    if(outputType=="mongodb"){
+                    } else {
                         save_list_of_df_to_db(list_of_df = crop_data,
                                               projectID=project_name,
                                               formID=form_name,
@@ -579,9 +573,8 @@ processData <- function(
                             readr::write_csv(livestock_price, "./mean_prices/livestock_price_per_animal.csv")
                         }
 
-                    }
+                    } else {
 
-                    if(outputType=="mongodb"){
                         save_list_of_df_to_db(list_of_df = livestock_data,
                                               projectID=project_name,
                                               formID=form_name,
